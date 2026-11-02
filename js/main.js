@@ -142,6 +142,65 @@
     }
   }
 
+  function toggleFaqPanel(trigger, panel) {
+    var expanded = trigger.getAttribute("aria-expanded") === "true";
+    trigger.setAttribute("aria-expanded", expanded ? "false" : "true");
+    if (expanded) {
+      panel.hidden = true;
+    } else {
+      panel.hidden = false;
+    }
+  }
+
+  function renderFaq(root, entries) {
+    var valid = (Array.isArray(entries) ? entries : []).filter(function (e) {
+      return e && nonEmptyString(e.question) && nonEmptyString(e.answer);
+    });
+    if (!valid.length) {
+      message(root, "No FAQ entries yet.");
+      return;
+    }
+    var list = document.createElement("div");
+    list.className = "faq__list";
+    valid.forEach(function (entry, index) {
+      var item = document.createElement("article");
+      item.className = "faq__item";
+      var triggerId = "faq-trigger-" + index;
+      var panelId = "faq-panel-" + index;
+
+      var heading = document.createElement("h3");
+      heading.className = "faq__question-heading";
+      var trigger = document.createElement("button");
+      trigger.type = "button";
+      trigger.className = "faq__trigger";
+      trigger.id = triggerId;
+      trigger.setAttribute("aria-expanded", "false");
+      trigger.setAttribute("aria-controls", panelId);
+      trigger.textContent = entry.question;
+      heading.appendChild(trigger);
+      item.appendChild(heading);
+
+      var panel = document.createElement("div");
+      panel.id = panelId;
+      panel.className = "faq__panel";
+      panel.setAttribute("role", "region");
+      panel.setAttribute("aria-labelledby", triggerId);
+      panel.hidden = true;
+      var answer = document.createElement("p");
+      answer.className = "faq__answer";
+      answer.textContent = entry.answer;
+      panel.appendChild(answer);
+      item.appendChild(panel);
+
+      trigger.addEventListener("click", function () {
+        toggleFaqPanel(trigger, panel);
+      });
+
+      list.appendChild(item);
+    });
+    root.replaceChildren(list);
+  }
+
   function renderChangelog(root, entries) {
     var valid = (Array.isArray(entries) ? entries : []).filter(function (e) {
       return e && nonEmptyString(e.title) && nonEmptyString(e.date);
@@ -191,6 +250,7 @@
     initTheme();
 
     var sectionsRoot = document.getElementById("sections-root");
+    var faqRoot = document.getElementById("faq-root");
     var changelogRoot = document.getElementById("changelog-root");
 
     loadJson("content.json")
@@ -199,6 +259,14 @@
       })
       .catch(function () {
         message(sectionsRoot, "We couldn't load the status right now.");
+      });
+
+    loadJson("faq.json")
+      .then(function (data) {
+        renderFaq(faqRoot, data);
+      })
+      .catch(function () {
+        message(faqRoot, "We couldn't load the FAQ right now.");
       });
 
     loadJson("changelog.json")
