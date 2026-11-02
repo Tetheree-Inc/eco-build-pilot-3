@@ -1,0 +1,16 @@
+{
+  "title": "ECO Pilot",
+  "tagline": "Pilot status page",
+  "sections": [
+    {
+      "id": "status",
+      "heading": "Status",
+      "body": "All systems operational."
+    },
+    {
+      "id": "about",
+      "heading": "About",
+      "body": "A small static site used to demo the ECO Build flow from request to release."
+    }
+  ]
+}
