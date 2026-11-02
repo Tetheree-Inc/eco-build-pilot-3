@@ -1,6 +1,85 @@
 (function () {
   "use strict";
 
+  var THEME_STORAGE_KEY = "eco-pilot-theme";
+
+  function getStoredTheme() {
+    try {
+      var theme = localStorage.getItem(THEME_STORAGE_KEY);
+      if (theme === "light" || theme === "dark") {
+        return theme;
+      }
+    } catch (err) {
+      /* ignore */
+    }
+    return null;
+  }
+
+  function getSystemTheme() {
+    return window.matchMedia("(prefers-color-scheme: light)").matches
+      ? "light"
+      : "dark";
+  }
+
+  function getEffectiveTheme() {
+    return getStoredTheme() || getSystemTheme();
+  }
+
+  function applyTheme(theme) {
+    if (theme === "light" || theme === "dark") {
+      document.documentElement.setAttribute("data-theme", theme);
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+    }
+  }
+
+  function updateThemeToggleUi(theme) {
+    var lightBtn = document.getElementById("theme-light");
+    var darkBtn = document.getElementById("theme-dark");
+    if (!lightBtn || !darkBtn) {
+      return;
+    }
+    lightBtn.setAttribute("aria-pressed", theme === "light" ? "true" : "false");
+    darkBtn.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+  }
+
+  function persistTheme(theme) {
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch (err) {
+      /* ignore */
+    }
+    applyTheme(theme);
+    updateThemeToggleUi(theme);
+  }
+
+  function initTheme() {
+    applyTheme(getStoredTheme());
+    updateThemeToggleUi(getEffectiveTheme());
+
+    var lightBtn = document.getElementById("theme-light");
+    var darkBtn = document.getElementById("theme-dark");
+    if (lightBtn) {
+      lightBtn.addEventListener("click", function () {
+        persistTheme("light");
+      });
+    }
+    if (darkBtn) {
+      darkBtn.addEventListener("click", function () {
+        persistTheme("dark");
+      });
+    }
+
+    window
+      .matchMedia("(prefers-color-scheme: light)")
+      .addEventListener("change", function () {
+        if (!getStoredTheme()) {
+          applyTheme(null);
+          updateThemeToggleUi(getEffectiveTheme());
+        }
+      });
+  }
+
   function dataUrl(file) {
     return new URL("./" + file, document.baseURI).href;
   }
@@ -109,6 +188,8 @@
   }
 
   function init() {
+    initTheme();
+
     var sectionsRoot = document.getElementById("sections-root");
     var changelogRoot = document.getElementById("changelog-root");
 

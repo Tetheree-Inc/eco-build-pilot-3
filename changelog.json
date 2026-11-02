@@ -1,5 +1,11 @@
 [
   {
+    "version": "1.1.0",
+    "date": "2026-11-02",
+    "title": "Header theme toggle",
+    "summary": "Light and dark theme control in the header with saved preference in localStorage."
+  },
+  {
     "version": "1.0.0",
     "date": "2026-11-02",
     "title": "Initial release",
