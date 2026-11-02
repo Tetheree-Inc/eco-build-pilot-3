@@ -1,0 +1,10 @@
+[
+  {
+    "question": "What is ECO?",
+    "answer": "ECO (Engineering Change Orchestration) is Tetheree’s build flow for turning scoped work orders into reviewed, deployable changes. This pilot status page is a small static demo site that ships through that pipeline so visitors can see live output on GitHub Pages."
+  },
+  {
+    "question": "How do deploys work?",
+    "answer": "The site is hosted on GitHub Pages. Pushes to the develop branch update the DEV preview; pushes to main update production. Each deploy runs through CI and the Eco Build Gate before the github-pages environment is updated, so you always see the commit that last passed checks."
+  }
+]

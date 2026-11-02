@@ -1,5 +1,11 @@
 [
   {
+    "version": "1.2.0",
+    "date": "2026-11-02",
+    "title": "FAQ section",
+    "summary": "Expandable FAQ loaded from faq.json with keyboard-accessible disclosures."
+  },
+  {
     "version": "1.1.0",
     "date": "2026-11-02",
     "title": "Header theme toggle",
