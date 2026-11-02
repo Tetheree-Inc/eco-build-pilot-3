@@ -6,12 +6,45 @@
     <title>ECO Pilot — Status</title>
     <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="./css/styles.css" />
+    <script>
+      (function () {
+        "use strict";
+        try {
+          var theme = localStorage.getItem("eco-pilot-theme");
+          if (theme === "light" || theme === "dark") {
+            document.documentElement.setAttribute("data-theme", theme);
+          }
+        } catch (err) {
+          /* ignore */
+        }
+      })();
+    </script>
   </head>
   <body>
     <header class="site-header">
       <div class="site-header__inner">
-        <h1 id="site-title" class="site-header__title">ECO Pilot</h1>
-        <p id="site-tagline" class="site-header__tagline">Pilot status page</p>
+        <div class="site-header__brand">
+          <h1 id="site-title" class="site-header__title">ECO Pilot</h1>
+          <p id="site-tagline" class="site-header__tagline">Pilot status page</p>
+        </div>
+        <div class="theme-toggle" role="group" aria-label="Color theme">
+          <button
+            type="button"
+            class="theme-toggle__btn"
+            id="theme-light"
+            aria-pressed="false"
+          >
+            Light
+          </button>
+          <button
+            type="button"
+            class="theme-toggle__btn"
+            id="theme-dark"
+            aria-pressed="false"
+          >
+            Dark
+          </button>
+        </div>
       </div>
     </header>
 
