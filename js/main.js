@@ -201,13 +201,56 @@
     root.replaceChildren(list);
   }
 
-  function renderChangelog(root, entries) {
+  var GITHUB_REPO_URL = "https://github.com/Tetheree-Inc/eco-build-pilot-3";
+
+  function validChangelogEntries(entries) {
     var valid = (Array.isArray(entries) ? entries : []).filter(function (e) {
       return e && nonEmptyString(e.title) && nonEmptyString(e.date);
     });
     valid.sort(function (a, b) {
       return a.date < b.date ? 1 : a.date > b.date ? -1 : 0;
     });
+    return valid;
+  }
+
+  function renderFooter(root, entries) {
+    if (!root) {
+      return;
+    }
+    root.replaceChildren();
+    var latest = validChangelogEntries(entries)[0];
+    if (!latest) {
+      root.textContent = "Release info unavailable.";
+      return;
+    }
+
+    root.appendChild(document.createTextNode("Release "));
+
+    if (nonEmptyString(latest.version)) {
+      var version = document.createElement("span");
+      version.className = "site-footer__version";
+      version.textContent = latest.version;
+      root.appendChild(version);
+      root.appendChild(document.createTextNode(" · "));
+    }
+
+    var releaseDate = document.createElement("time");
+    releaseDate.dateTime = latest.date;
+    releaseDate.textContent = latest.date;
+    root.appendChild(releaseDate);
+    root.appendChild(document.createTextNode(" · "));
+
+    var repoLink = document.createElement("a");
+    repoLink.className = "site-footer__repo-link";
+    repoLink.href = GITHUB_REPO_URL;
+    repoLink.target = "_blank";
+    repoLink.rel = "noopener";
+    repoLink.textContent = "GitHub repository";
+    root.appendChild(repoLink);
+  }
+
+  function renderChangelog(root, entries) {
+    var valid = validChangelogEntries(entries);
     if (!valid.length) {
       message(root, "No changelog entries yet.");
       return;
@@ -252,6 +295,7 @@
     var sectionsRoot = document.getElementById("sections-root");
     var faqRoot = document.getElementById("faq-root");
     var changelogRoot = document.getElementById("changelog-root");
+    var footerMeta = document.getElementById("site-footer-meta");
 
     loadJson("content.json")
       .then(function (data) {
@@ -272,9 +316,13 @@
     loadJson("changelog.json")
       .then(function (data) {
         renderChangelog(changelogRoot, data);
+        renderFooter(footerMeta, data);
       })
       .catch(function () {
         message(changelogRoot, "We couldn't load the changelog right now.");
+        if (footerMeta) {
+          footerMeta.textContent = "Release info unavailable.";
+        }
       });
   }
 

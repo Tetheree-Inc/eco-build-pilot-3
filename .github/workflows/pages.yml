@@ -45,14 +45,6 @@ jobs:
             else
               mkdir -p "$out" && cp -R "$src/." "$out/"
               rm -rf "$out/.git" "$out/.github"
-              if [ -f "$out/index.html" ]; then
-                SHORT_SHA=$(git -C "$src" rev-parse --short HEAD)
-                BUILD_DATE_ISO=$(date -u +"%Y-%m-%dT%H:%MZ")
-                BUILD_DATE=$(date -u +"%Y-%m-%d %H:%M UTC")
-                sed -i "s|__BUILD_DATE_ISO__|${BUILD_DATE_ISO}|g" "$out/index.html"
-                sed -i "s|__BUILD_DATE__|${BUILD_DATE}|g" "$out/index.html"
-                sed -i "s|__COMMIT_SHA__|${SHORT_SHA}|g" "$out/index.html"
-              fi
             fi
           }
           site src/prod _site "/${{ github.event.repository.name }}/"
